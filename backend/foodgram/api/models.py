@@ -48,12 +48,12 @@ class IngredientInRecipe(models.Model):
     '''Модель для связи рецепта и ингредиентов.'''
     recipe = models.ForeignKey(
         Recipe,
-        related_name='IngredientsInRecipe',
+        related_name='ingredient',
         on_delete=models.CASCADE
     )
     ingredient = models.ForeignKey(
         Ingredient,
-        related_name='IngredientsInRecipe',
+        related_name='ingredient',
         on_delete=models.CASCADE
     )
     amount = models.IntegerField(
