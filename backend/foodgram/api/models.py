@@ -1,3 +1,103 @@
 from django.db import models
+from users.models import User
+from django.core.validators import MinValueValidator, RegexValidator
+from django.db.models import UniqueConstraint
 
-# Create your models here.
+
+class Ingredient(models.Model):
+    name = models.CharField('Название продукта',
+                            max_length=200)
+    mesurement_unit = models.CharField('Единица измерения',
+                                       max_length=200)
+
+
+class Tag(models.Model):
+    name = models.CharField('Название',
+                            max_length=200,
+                            unique=True)
+    color = models.CharField('Цвет в HEX',
+                             max_length=7,
+                             unique=True,
+                             validators=[
+                                 RegexValidator(
+                                     regex='^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$',
+                                     message='Введите значение цвета в формате HEX')])
+    slug = models.CharField('Уникальный слаг',
+                            max_length=200,
+                            unique=True,
+                            db_index=True)
+
+
+class Recipe(models.Model):
+    ingredients = models.ManyToManyField(Ingredient,
+                                         through='IngredientInRecipe',
+                                         related_name='recipes')
+    tags = models.ManyToManyField(Tag,
+                                  related_name='recipes')
+    author = models.ForeignKey(User,
+                               on_delete=models.CASCADE,
+                               related_name='recipes')
+    name = models.CharField('Название', max_length=200)
+    image = models.ImageField('Картинка с блюдом',
+                              upload_to='../media/images/')
+    text = models.TextField('Описание')
+    cooking_time = models.IntegerField('Время приготовления в минутах')
+
+
+class IngredientInRecipe(models.Model):
+    '''Модель для связи рецепта и ингредиентов.'''
+    recipe = models.ForeignKey(
+        Recipe,
+        related_name='IngredientsInRecipe',
+        on_delete=models.CASCADE
+    )
+    ingredient = models.ForeignKey(
+        Ingredient,
+        related_name='IngredientsInRecipe',
+        on_delete=models.CASCADE
+    )
+    amount = models.IntegerField(
+        'Колличество',
+        validators=[
+            MinValueValidator(
+                1, 'Колличество ингредиента в рецептне не может быть менее 1.'
+            )
+        ]
+    )
+
+
+class Favorite(models.Model):
+    '''Избранные рецепты.'''
+    user = models.ForeignKey(
+        User,
+        related_name='FavoriteRecipe',
+        on_delete=models.CASCADE
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        related_name='FavoriteRecipe',
+        on_delete=models.CASCADE
+    )
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(fields=['user', 'recipe'],
+                             name='unique_favorite')
+        ]
+
+
+class ShoppingCart(models.Model):
+    user = models.ForeignKey(User,
+                             on_delete=models.CASCADE,
+                             related_name='ShopingCart')
+    recipe = models.ForeignKey(Recipe,
+                               on_delete=models.CASCADE,
+                               related_name='ShopingCart')
+    
+    class Meta:
+        ordering = ['-id']
+        verbose_name = 'Список покупок'
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'recipe'],
+                                    name='unique cart user')
+        ]

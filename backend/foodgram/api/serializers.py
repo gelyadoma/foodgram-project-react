@@ -3,6 +3,8 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from users.models import Follow
 
+from .models import Ingredient, Tag, Recipe, IngredientInRecipe, Favorite, ShoppingCart
+
 User = get_user_model()
 
 
@@ -47,3 +49,7 @@ class UserSerializer(UserSerializer):
         return Follow.objects.filter(user=user, author=obj.id).exists()
 
 
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = ('id', 'name', 'color', 'slug')
