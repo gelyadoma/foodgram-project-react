@@ -2,9 +2,6 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
 from django.contrib.auth import get_user_model
-
-# from django.contrib.auth import update_session_auth_hash
-# from django.db.models import F, Sum
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
@@ -14,7 +11,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
 from users.models import Follow
-from .serializers import CropRecipeSerializer, IngredientSerializer, FollowSerializer, RecipesSerializer, TagSerializer
+from .serializers import CropRecipeSerializer, IngredientSerializer, FollowSerializer, RecipePostSerializer, RecipeGetSerializer, TagSerializer
 from .models import Ingredient, Recipe, Tag, Favorite, ShoppingCart, IngredientInRecipe
 from .pagination import LimitPageNumberPagination
 from .permissions import IsOwnerOrReadOnly, IsAdminOrReadOnly
@@ -93,11 +90,19 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 
 class RecipesViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
-    serializer_class = RecipesSerializer
+    serializer_class = CropRecipeSerializer
     pagination_class = LimitPageNumberPagination
     filter_class = AuthorAndTagFilter
     permission_classes = [IsOwnerOrReadOnly]
 
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return RecipeGetSerializer
+        elif self.action in ['favorite', 'shopping_cart', ]:
+            return CropRecipeSerializer
+
+        return RecipePostSerializer
+    
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
@@ -106,18 +111,18 @@ class RecipesViewSet(viewsets.ModelViewSet):
     def favorite(self, request, pk=None):
         if request.method == 'POST':
             return self.add_obj(Favorite, request.user, pk)
-        elif request.method == 'DELETE':
-            return self.delete_obj(Favorite, request.user, pk)
-        return None
+        # elif request.method == 'DELETE':
+        return self.delete_obj(Favorite, request.user, pk)
+        # return None
 
     @action(detail=True, methods=['post', 'delete'],
             permission_classes=[IsAuthenticated])
     def shopping_cart(self, request, pk=None):
         if request.method == 'POST':
             return self.add_obj(ShoppingCart, request.user, pk)
-        elif request.method == 'DELETE':
-            return self.delete_obj(ShoppingCart, request.user, pk)
-        return None
+        # elif request.method == 'DELETE':
+        return self.delete_obj(ShoppingCart, request.user, pk)
+        # return None
 
     @action(detail=False, methods=['get'],
             permission_classes=[IsAuthenticated])

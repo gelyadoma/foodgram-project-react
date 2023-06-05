@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from .models import Follow
 
 
-class MyUserAdmin(UserAdmin):
+class UserAdmin(UserAdmin):
     list_display = ('username',
                     'first_name',
                     'last_name',
@@ -14,7 +14,7 @@ class MyUserAdmin(UserAdmin):
 
 
 admin.site.unregister(User)
-admin.site.register(User, MyUserAdmin)
+admin.site.register(User, UserAdmin)
 
 
 @admin.register(Follow)
