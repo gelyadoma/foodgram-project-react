@@ -1,13 +1,13 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from .views import CustomUserViewSet, GetTagViewSet, GetIngredientViewSet, RecipesViewSet
+from .views import CustomUserViewSet, TagViewSet, IngredientViewSet, RecipesViewSet
 
 app_name = 'api'
 
 router = DefaultRouter()
-router.register('tags', GetTagViewSet, basename='tags')
-router.register('ingredients', GetIngredientViewSet, basename='ingredients')
+router.register('tags', TagViewSet, basename='tags')
+router.register('ingredients', IngredientViewSet, basename='ingredients')
 router.register('recipes', RecipesViewSet, basename='recipes')
 router.register('users', CustomUserViewSet, basename='users')
 

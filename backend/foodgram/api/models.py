@@ -7,8 +7,11 @@ from django.db.models import UniqueConstraint
 class Ingredient(models.Model):
     name = models.CharField('Название продукта',
                             max_length=200)
-    mesurement_unit = models.CharField('Единица измерения',
-                                       max_length=200)
+    measurement_unit = models.CharField('Единица измерения',
+                                        max_length=200)
+    
+    def __str__(self) -> str:
+        return self.name
 
 
 class Tag(models.Model):
@@ -26,6 +29,9 @@ class Tag(models.Model):
                             max_length=200,
                             unique=True,
                             db_index=True)
+    
+    def __str__(self) -> str:
+        return self.name
 
 
 class Recipe(models.Model):
@@ -39,21 +45,22 @@ class Recipe(models.Model):
                                related_name='recipes')
     name = models.CharField('Название', max_length=200)
     image = models.ImageField('Картинка с блюдом',
-                              upload_to='../media/images/')
+                              upload_to='images/')
     text = models.TextField('Описание')
     cooking_time = models.IntegerField('Время приготовления в минутах')
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class IngredientInRecipe(models.Model):
     '''Модель для связи рецепта и ингредиентов.'''
     recipe = models.ForeignKey(
         Recipe,
-        related_name='ingredient',
         on_delete=models.CASCADE
     )
     ingredient = models.ForeignKey(
         Ingredient,
-        related_name='ingredient',
         on_delete=models.CASCADE
     )
     amount = models.IntegerField(
@@ -64,6 +71,15 @@ class IngredientInRecipe(models.Model):
             )
         ]
     )
+
+    class Meta:
+        ordering = ['-id']
+        verbose_name = 'Количество ингридиента'
+        verbose_name_plural = 'Количество ингридиентов'
+        constraints = [
+            models.UniqueConstraint(fields=['ingredient', 'recipe'],
+                                    name='unique ingredients recipe')
+        ]
 
 
 class Favorite(models.Model):
@@ -89,15 +105,16 @@ class Favorite(models.Model):
 class ShoppingCart(models.Model):
     user = models.ForeignKey(User,
                              on_delete=models.CASCADE,
-                             related_name='ShopingCart')
+                             related_name='cart')
     recipe = models.ForeignKey(Recipe,
                                on_delete=models.CASCADE,
-                               related_name='ShopingCart')
+                               related_name='cart')
     
     class Meta:
         ordering = ['-id']
-        verbose_name = 'Список покупок'
+        verbose_name = 'Shopping list'
+        verbose_name_plural = 'Shopping lists'
         constraints = [
             models.UniqueConstraint(fields=['user', 'recipe'],
-                                    name='unique cart user')
+                                    name='unique_cart_user')
         ]
