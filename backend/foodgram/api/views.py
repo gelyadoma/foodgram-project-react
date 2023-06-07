@@ -96,6 +96,16 @@ class RecipesViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
+    def get_queryset(self):
+        is_favorited = self.request.query_params.get('is_favorited')
+        if is_favorited is not None and int(is_favorited) == 1:
+            return Recipe.objects.filter(favorites__user=self.request.user)
+        is_in_shopping_cart = self.request.query_params.get(
+            'is_in_shopping_cart')
+        if is_in_shopping_cart is not None and int(is_in_shopping_cart) == 1:
+            return Recipe.objects.filter(cart__user=self.request.user)
+        return Recipe.objects.all()
+
     def get_serializer_class(self):
         if self.request.method == 'GET':
             return RecipeGetSerializer

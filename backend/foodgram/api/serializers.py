@@ -203,9 +203,10 @@ class RecipePostSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
+        image = validated_data.pop('image')
         ingredients_data = validated_data.pop('ingredients')
         tags_data = validated_data.pop('tags')
-        recipe = Recipe.objects.create(**validated_data)
+        recipe = Recipe.objects.create(image=image, **validated_data)
         recipe.tags.set(tags_data)
         self.create_ingredients(recipe, ingredients_data)
         return recipe
@@ -231,6 +232,14 @@ class RecipePostSerializer(serializers.ModelSerializer):
 
 
 class CropRecipeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Recipe
+        fields = ('id', 'name', 'image', 'cooking_time')
+
+
+class RecipeFollowSerializer(serializers.ModelSerializer):
+    image = Base64ImageField()
 
     class Meta:
         model = Recipe
@@ -263,7 +272,7 @@ class FollowSerializer(serializers.ModelSerializer):
         queryset = Recipe.objects.filter(author=obj.author)
         if limit:
             queryset = queryset[:int(limit)]
-        return CropRecipeSerializer(queryset, many=True).data
+        return RecipeFollowSerializer(queryset, many=True).data
 
     def get_recipes_count(self, obj):
         return Recipe.objects.filter(author=obj.author).count()
