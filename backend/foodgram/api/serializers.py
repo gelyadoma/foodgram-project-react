@@ -211,13 +211,15 @@ class RecipePostSerializer(serializers.ModelSerializer):
         return recipe
 
     def update(self, instance, validated_data):
-        instance.tags.clear()
-        tags_data = self.initial_data.get('tags')
-        instance.tags.set(tags_data)
-        IngredientsInRecipe.objects.filter(recipe=instance).delete()
-        self.create_ingredients(
-            validated_data.get('ingredients'), instance
-            )
+        if 'tags' in self.validated_data:
+            tags_data = validated_data.pop('tags')
+            instance.tags.set(tags_data)
+        if 'ingredients' in self.validated_data:
+            ingredients_data = validated_data.pop('ingredients')
+            amount_set = IngredientsInRecipe.objects.filter(
+                recipe__id=instance.id)
+            amount_set.delete()
+            self.create_ingredients(instance, ingredients_data)
         return super().update(instance, validated_data)
 
     def to_representation(self, instance):
