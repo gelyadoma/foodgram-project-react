@@ -36,7 +36,7 @@ class Tag(models.Model):
 
 class Recipe(models.Model):
     ingredients = models.ManyToManyField(Ingredient,
-                                         through='IngredientInRecipe',
+                                         through='IngredientsInRecipe',
                                          related_name='recipes')
     tags = models.ManyToManyField(Tag,
                                   related_name='recipes')
@@ -53,7 +53,7 @@ class Recipe(models.Model):
         return self.name
 
 
-class IngredientInRecipe(models.Model):
+class IngredientsInRecipe(models.Model):
     '''Модель для связи рецепта и ингредиентов.'''
     recipe = models.ForeignKey(
         Recipe,
@@ -74,8 +74,8 @@ class IngredientInRecipe(models.Model):
 
     class Meta:
         ordering = ['-id']
-        verbose_name = 'Количество ингридиента'
-        verbose_name_plural = 'Количество ингридиентов'
+        verbose_name = 'Ингредиенты в рецепте'
+        verbose_name_plural = 'Ингредиенты в рецептах'
         constraints = [
             models.UniqueConstraint(fields=['ingredient', 'recipe'],
                                     name='unique ingredients recipe')

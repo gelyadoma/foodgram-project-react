@@ -1,10 +1,9 @@
 from django.contrib import admin
-from django import forms
-from .models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
+from .models import (Favorite, Ingredient, IngredientsInRecipe, Recipe,
                      ShoppingCart, Tag)
 
 
-@admin.register(IngredientInRecipe)
+@admin.register(IngredientsInRecipe)
 class IngredientInRecipeAdmin(admin.ModelAdmin):
     list_display = ('recipe', 'ingredient', 'amount')
 
@@ -21,7 +20,7 @@ class TagAdmin(admin.ModelAdmin):
 
 
 class RecipeIngredientInline(admin.TabularInline):
-    model = IngredientInRecipe
+    model = IngredientsInRecipe
     min_num = 1
     extra = 0
 
@@ -33,7 +32,7 @@ class RecipeAdmin(admin.ModelAdmin):
     inlines = [RecipeIngredientInline]
     
     def in_favorite(self, obj):
-        return obj.FavoriteRecipe.count()
+        return obj.Favorite_Recipe.count()
 
 
 @admin.register(Favorite)

@@ -11,8 +11,8 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
 from users.models import Follow
-from .serializers import CropRecipeSerializer, IngredientSerializer, FollowSerializer, RecipePostSerializer, RecipeGetSerializer, TagSerializer
-from .models import Ingredient, Recipe, Tag, Favorite, ShoppingCart, IngredientInRecipe
+from .serializers import RecipeGetSerializer, RecipePostSerializer, CropRecipeSerializer, IngredientSerializer, FollowSerializer, TagSerializer
+from .models import Ingredient, Recipe, Tag, Favorite, ShoppingCart, IngredientsInRecipe
 from .pagination import LimitPageNumberPagination
 from .permissions import IsOwnerOrReadOnly, IsAdminOrReadOnly
 from .filters import AuthorAndTagFilter, IngredientSearchFilter
@@ -81,7 +81,6 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
-    permission_classes = (IsAdminOrReadOnly,)
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     filter_backends = (IngredientSearchFilter,)
@@ -90,10 +89,12 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 
 class RecipesViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
-    serializer_class = CropRecipeSerializer
     pagination_class = LimitPageNumberPagination
     filter_class = AuthorAndTagFilter
     permission_classes = [IsOwnerOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -102,33 +103,26 @@ class RecipesViewSet(viewsets.ModelViewSet):
             return CropRecipeSerializer
 
         return RecipePostSerializer
-    
-    def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
 
     @action(detail=True, methods=['post', 'delete'],
             permission_classes=[IsAuthenticated])
     def favorite(self, request, pk=None):
         if request.method == 'POST':
             return self.add_obj(Favorite, request.user, pk)
-        # elif request.method == 'DELETE':
         return self.delete_obj(Favorite, request.user, pk)
-        # return None
 
     @action(detail=True, methods=['post', 'delete'],
             permission_classes=[IsAuthenticated])
     def shopping_cart(self, request, pk=None):
         if request.method == 'POST':
             return self.add_obj(ShoppingCart, request.user, pk)
-        # elif request.method == 'DELETE':
         return self.delete_obj(ShoppingCart, request.user, pk)
-        # return None
 
     @action(detail=False, methods=['get'],
             permission_classes=[IsAuthenticated])
     def download_shopping_cart(self, request):
         final_list = {}
-        ingredients = IngredientInRecipe.objects.filter(
+        ingredients = IngredientsInRecipe.objects.filter(
             recipe__cart__user=request.user).values_list(
             'ingredient__name', 'ingredient__measurement_unit',
             'amount')
