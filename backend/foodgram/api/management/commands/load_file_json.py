@@ -25,10 +25,8 @@ class Command(BaseCommand):
 
             datareader = json.load(json_file)
             for row in datareader:
-                data = Ingredient(
-                        name=row['name'],
-                        measurement_unit=row['measurement_unit']
-                    )
+                data = Ingredient(name=row['name'],
+                                  measurement_unit=row['measurement_unit'])
 
                 data.save()
             print('Файл успешно импортирован')

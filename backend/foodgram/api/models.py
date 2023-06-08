@@ -1,7 +1,8 @@
-from django.db import models
-from users.models import User
 from django.core.validators import MinValueValidator, RegexValidator
+from django.db import models
 from django.db.models import UniqueConstraint
+
+from users.models import User
 
 
 class Ingredient(models.Model):
@@ -22,10 +23,11 @@ class Tag(models.Model):
         'Цвет в HEX',
         max_length=7,
         unique=True,
-        validators=[
-         RegexValidator(
-             regex='^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$',
-             message='Введите значение цвета в формате HEX')])
+        validators=[RegexValidator(
+            regex='^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$',
+            message='Введите значение цвета в формате HEX')
+        ]
+    )
     slug = models.CharField('Уникальный слаг',
                             max_length=200,
                             unique=True,
@@ -50,7 +52,7 @@ class Recipe(models.Model):
     text = models.TextField('Описание')
     cooking_time = models.PositiveSmallIntegerField(
         'Время приготовления в минутах'
-        )
+    )
 
     def __str__(self) -> str:
         return self.name
