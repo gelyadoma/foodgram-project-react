@@ -1,13 +1,11 @@
-FROM python:3.10-slim
-
-RUN mkdir /app
-
-COPY requirements.txt /app
-
-RUN pip install -r /app/requirements.txt --no-cache-dir
-
-COPY foodgram/ /app
+FROM python:3.8-slim
 
 WORKDIR /app
 
-CMD ["gunicorn", "api_yamdb.wsgi:application", "--bind", "0:8000" ] 
+COPY requirements.txt /app
+
+RUN python -m pip install --upgrade pip && pip install -r /app/requirements.txt --no-cache-dir
+
+COPY . .
+
+CMD ["gunicorn", "foodgram.wsgi:application", "--bind", "0:8000" ] 
