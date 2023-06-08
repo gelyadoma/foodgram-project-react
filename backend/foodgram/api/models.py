@@ -9,7 +9,7 @@ class Ingredient(models.Model):
                             max_length=200)
     measurement_unit = models.CharField('Единица измерения',
                                         max_length=200)
-    
+
     def __str__(self) -> str:
         return self.name
 
@@ -18,18 +18,19 @@ class Tag(models.Model):
     name = models.CharField('Название',
                             max_length=200,
                             unique=True)
-    color = models.CharField('Цвет в HEX',
-                             max_length=7,
-                             unique=True,
-                             validators=[
-                                 RegexValidator(
-                                     regex='^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$',
-                                     message='Введите значение цвета в формате HEX')])
+    color = models.CharField(
+        'Цвет в HEX',
+        max_length=7,
+        unique=True,
+        validators=[
+         RegexValidator(
+             regex='^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$',
+             message='Введите значение цвета в формате HEX')])
     slug = models.CharField('Уникальный слаг',
                             max_length=200,
                             unique=True,
                             db_index=True)
-    
+
     def __str__(self) -> str:
         return self.name
 
@@ -47,7 +48,9 @@ class Recipe(models.Model):
     image = models.ImageField('Картинка с блюдом',
                               upload_to='images/')
     text = models.TextField('Описание')
-    cooking_time = models.IntegerField('Время приготовления в минутах')
+    cooking_time = models.PositiveSmallIntegerField(
+        'Время приготовления в минутах'
+        )
 
     def __str__(self) -> str:
         return self.name
@@ -86,12 +89,12 @@ class Favorite(models.Model):
     '''Избранные рецепты.'''
     user = models.ForeignKey(
         User,
-        related_name='Favorite_Recipe',
+        related_name='favorite_recipe',
         on_delete=models.CASCADE
     )
     recipe = models.ForeignKey(
         Recipe,
-        related_name='Favorite_Recipe',
+        related_name='favorite_recipe',
         on_delete=models.CASCADE
     )
 
@@ -109,7 +112,7 @@ class ShoppingCart(models.Model):
     recipe = models.ForeignKey(Recipe,
                                on_delete=models.CASCADE,
                                related_name='cart')
-    
+
     class Meta:
         ordering = ['-id']
         verbose_name = 'Shopping list'

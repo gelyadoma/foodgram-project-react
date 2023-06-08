@@ -12,10 +12,13 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
 from users.models import Follow
-from .serializers import RecipeGetSerializer, RecipePostSerializer, CropRecipeSerializer, IngredientSerializer, FollowSerializer, TagSerializer
-from .models import Ingredient, Recipe, Tag, Favorite, ShoppingCart, IngredientsInRecipe
+from .serializers import RecipeGetSerializer, RecipePostSerializer,\
+      CropRecipeSerializer, IngredientSerializer, FollowSerializer, \
+      TagSerializer
+from .models import Ingredient, Recipe, Tag, Favorite, ShoppingCart,\
+      IngredientsInRecipe
 from .pagination import LimitPageNumberPagination
-from .permissions import IsOwnerOrReadOnly, IsAdminOrReadOnly
+from .permissions import IsOwnerOrReadOnly
 from .filters import AuthorAndTagFilter, IngredientSearchFilter
 
 User = get_user_model()
@@ -24,7 +27,10 @@ User = get_user_model()
 class CustomUserViewSet(UserViewSet):
     pagination_class = LimitPageNumberPagination
 
-    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
+    @action(detail=True,
+            methods=['post'],
+            permission_classes=[IsAuthenticated]
+            )
     def subscribe(self, request, id=None):
         '''Подписка на автора'''
         user = request.user

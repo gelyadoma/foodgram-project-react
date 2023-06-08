@@ -1,13 +1,12 @@
-from django.shortcuts import get_object_or_404
 from djoser.serializers import UserSerializer, UserCreateSerializer
 from django.contrib.auth import get_user_model
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
-from django.db.models import F
 from users.models import Follow
 
-from .models import Ingredient, Tag, Recipe, IngredientsInRecipe, Favorite, ShoppingCart
+from .models import Ingredient, Tag, Recipe,\
+      IngredientsInRecipe, Favorite, ShoppingCart
 
 User = get_user_model()
 
@@ -45,7 +44,7 @@ class UserSerializer(UserSerializer):
             'last_name',
             'is_subscribed'
             )
-        
+
     def get_is_subscribed(self, obj):
         user = self.context['request'].user
         if user.is_anonymous:
@@ -137,7 +136,7 @@ class RecipeGetSerializer(serializers.ModelSerializer):
         return ShoppingCart.objects.filter(
             recipe=obj, user=request.user
         ).exists()
-    
+
     def get_ingredients(self, obj):
         recipe_ingredients = IngredientsInRecipe.objects.filter(recipe=obj)
         return IngredientRecipeGetSerializer(recipe_ingredients,
