@@ -12,11 +12,11 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
 from users.models import Follow
-from .serializers import RecipeGetSerializer, RecipePostSerializer,\
-      CropRecipeSerializer, IngredientSerializer, FollowSerializer, \
-      TagSerializer
-from .models import Ingredient, Recipe, Tag, Favorite, ShoppingCart,\
-      IngredientsInRecipe
+from .serializers import (RecipeGetSerializer, RecipePostSerializer,
+                          CropRecipeSerializer, IngredientSerializer,
+                          FollowSerializer, TagSerializer)
+from .models import (Ingredient, Recipe, Tag,
+                     Favorite, ShoppingCart, IngredientsInRecipe)
 from .pagination import LimitPageNumberPagination
 from .permissions import IsOwnerOrReadOnly
 from .filters import AuthorAndTagFilter, IngredientSearchFilter
@@ -141,7 +141,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         ingredients = IngredientsInRecipe.objects.filter(
             recipe__cart__user=request.user).values_list(
             'ingredient__name', 'ingredient__measurement_unit').annotate(
-            amount=Sum('amount')
+            sum_ingredient=Sum('amount')
             )
         pdfmetrics.registerFont(
             TTFont('Slimamif', 'Slimamif.ttf', 'UTF-8'))
@@ -159,11 +159,13 @@ class RecipesViewSet(viewsets.ModelViewSet):
             if name not in shoppint_cart:
                 shoppint_cart[name] = {
                     'measurement_unit': item[1],
-                    'amount': item[2]
+                    'sum_ingredient': item[2]
                 }
         for i, (name, data) in enumerate(shoppint_cart.items(), start=1):
-            page.drawString(75, height, (f'{i} - {name} - {data["amount"]}, '
-                                         f'{data["measurement_unit"]}'))
+            page.drawString(75,
+                            height,
+                            (f'{i} - {name} - {data["sum_ingredient"]}, '
+                             f'{data["measurement_unit"]}'))
             height -= 25
         page.showPage()
         page.save()
