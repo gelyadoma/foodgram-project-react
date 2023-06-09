@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db.models import Sum
+from django_filters.rest_framework import DjangoFilterBackend
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
@@ -91,14 +92,16 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    filter_backends = (IngredientSearchFilter,)
+    filter_backends = (DjangoFilterBackend,)
+    filter_class = (IngredientSearchFilter,)
     search_fields = ('^name',)
 
 
 class RecipesViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     pagination_class = LimitPageNumberPagination
-    filter_class = AuthorAndTagFilter
+    filter_backends = (DjangoFilterBackend, )
+    filterset_class = (AuthorAndTagFilter, )
     permission_classes = [IsOwnerOrReadOnly]
 
     def perform_create(self, serializer):
