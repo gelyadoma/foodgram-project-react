@@ -14,7 +14,7 @@ from rest_framework.response import Response
 from users.models import Follow
 
 from .filters import AuthorAndTagFilter, IngredientSearchFilter
-from .models import (Favorite, Ingredient, IngredientsInRecipe, Recipe,
+from .models import (Ingredient, IngredientsInRecipe, Favorite, Recipe,
                      ShoppingCart, Tag)
 from .pagination import LimitPageNumberPagination
 from .permissions import IsOwnerOrReadOnly
