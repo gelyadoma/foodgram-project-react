@@ -7,21 +7,23 @@ services:
     env_file:
       - ./.env
   
-  backend:    
-    image: gelyadoma/foodgram:latest 
+  backend: 
+    build:   
+      image: gelyadoma/foodgram:v1
     restart: always    
     volumes:      
       - static_value:/app/static/      
       - media_value:/app/media/
     ports:
-     - "8000:8000"    
+      - "8000:8000"    
     depends_on:
       - db
     env_file:
       - ./.env 
   
   frontend:
-    image: gelyadoma/frontend:latest 
+    build:
+      image: gelyadoma/frontend:v1
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:

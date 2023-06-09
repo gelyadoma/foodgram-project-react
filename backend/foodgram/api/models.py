@@ -49,6 +49,14 @@ class Recipe(models.Model):
     text = models.TextField('Описание')
     cooking_time = models.PositiveSmallIntegerField(
         'Время приготовления в минутах')
+    pub_date = models.DateTimeField(
+        'Дата создания',
+        auto_now_add=True)
+    
+    class Meta:
+        verbose_name = 'Рецепт'
+        verbose_name_plural = 'Рецепты'
+        ordering = ('-pub_date',)
 
     def __str__(self) -> str:
         return self.name
