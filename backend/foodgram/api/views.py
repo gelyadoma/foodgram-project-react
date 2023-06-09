@@ -10,6 +10,7 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.response import Response
 
 from users.models import Follow
 
@@ -118,8 +119,8 @@ class RecipesViewSet(viewsets.ModelViewSet):
         if self.request.method == 'GET':
             return RecipeGetSerializer
         if self.action in ['favorite', 'shopping_cart', ]:
+        if self.action in ['favorite', 'shopping_cart', ]:
             return CropRecipeSerializer
-
         return RecipePostSerializer
 
     @action(detail=True, methods=['post', 'delete'],
@@ -142,8 +143,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         ingredients = IngredientsInRecipe.objects.filter(
             recipe__cart__user=request.user).values_list(
             'ingredient__name', 'ingredient__measurement_unit').annotate(
-            sum_ingredient=Sum('amount')
-            )
+            sum_ingredient=Sum('amount'))
         pdfmetrics.registerFont(
             TTFont('Slimamif', 'Slimamif.ttf', 'UTF-8'))
         response = HttpResponse(content_type='application/pdf')
