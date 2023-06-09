@@ -8,8 +8,7 @@ services:
       - ./.env
   
   backend: 
-    build:   
-      image: gelyadoma/foodgram:v1
+    image: gelyadoma/foodgram:v1
     restart: always    
     volumes:      
       - static_value:/app/static/      
@@ -22,8 +21,7 @@ services:
       - ./.env 
   
   frontend:
-    build:
-      image: gelyadoma/frontend:v1
+    image: gelyadoma/frontend:v1
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
