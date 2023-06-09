@@ -1,25 +1,26 @@
+from django.contrib.auth import get_user_model
 from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
-from django.contrib.auth import get_user_model
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 from rest_framework import status, viewsets
-from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from users.models import Follow
-from .serializers import (RecipeGetSerializer, RecipePostSerializer,
-                          CropRecipeSerializer, IngredientSerializer,
-                          FollowSerializer, TagSerializer)
-from .models import (Ingredient, Recipe, Tag,
-                     Favorite, ShoppingCart, IngredientsInRecipe)
+
+from .filters import AuthorAndTagFilter, IngredientSearchFilter
+from .models import (Favorite, Ingredient, IngredientsInRecipe, Recipe,
+                     ShoppingCart, Tag)
 from .pagination import LimitPageNumberPagination
 from .permissions import IsOwnerOrReadOnly
-from .filters import AuthorAndTagFilter, IngredientSearchFilter
+from .serializers import (CropRecipeSerializer, FollowSerializer,
+                          IngredientSerializer, RecipeGetSerializer,
+                          RecipePostSerializer, TagSerializer)
 
 User = get_user_model()
 
@@ -116,7 +117,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.request.method == 'GET':
             return RecipeGetSerializer
-        elif self.action in ['favorite', 'shopping_cart', ]:
+        if self.action in ['favorite', 'shopping_cart', ]:
             return CropRecipeSerializer
 
         return RecipePostSerializer
