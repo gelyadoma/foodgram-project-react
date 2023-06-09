@@ -1,5 +1,7 @@
 import json
+import os
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from api.models import Ingredient
@@ -20,7 +22,7 @@ class Command(BaseCommand):
         """
         print('Начинаю импорт файла')
 
-        with open(('D:\\Dev\\foodgram-project-react\\data\\ingredients.json'),
+        with open(os.path.join(settings.BASE_DIR, 'data/ingredients.json'),
                   'r', encoding='utf-8') as json_file:
 
             datareader = json.load(json_file)

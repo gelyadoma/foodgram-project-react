@@ -16,7 +16,6 @@ eggs/
 .eggs/
 lib/
 lib64/
-media/
 parts/
 sdist/
 var/
@@ -28,7 +27,6 @@ share/python-wheels/
 *.egg
 MANIFEST
 frontend/node_modules
-.vscode/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

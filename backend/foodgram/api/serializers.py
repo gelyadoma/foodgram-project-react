@@ -3,10 +3,11 @@ from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
+
 from users.models import Follow
 
-from .models import (Ingredient, IngredientsInRecipe, Favorite, 
-                     Recipe, ShoppingCart, Tag)
+from .models import (Favorite, Ingredient, IngredientsInRecipe, Recipe,
+                     ShoppingCart, Tag)
 
 User = get_user_model()
 
@@ -20,8 +21,7 @@ class CreateUserSerializer(UserCreateSerializer):
             'username',
             'first_name',
             'last_name',
-            'password'
-        )
+            'password')
         extra_kwargs = {
             'email': {'required': True},
             'username': {'required': True},
@@ -42,8 +42,7 @@ class UserSerializer(UserSerializer):
             'username',
             'first_name',
             'last_name',
-            'is_subscribed'
-        )
+            'is_subscribed')
 
     def get_is_subscribed(self, obj):
         user = self.context['request'].user

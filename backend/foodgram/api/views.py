@@ -10,12 +10,11 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.response import Response
 
 from users.models import Follow
 
 from .filters import AuthorAndTagFilter, IngredientSearchFilter
-from .models import (Ingredient, IngredientsInRecipe, Favorite, Recipe,
+from .models import (Favorite, Ingredient, IngredientsInRecipe, Recipe,
                      ShoppingCart, Tag)
 from .pagination import LimitPageNumberPagination
 from .permissions import IsOwnerOrReadOnly
@@ -118,7 +117,6 @@ class RecipesViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.request.method == 'GET':
             return RecipeGetSerializer
-        if self.action in ['favorite', 'shopping_cart', ]:
         if self.action in ['favorite', 'shopping_cart', ]:
             return CropRecipeSerializer
         return RecipePostSerializer

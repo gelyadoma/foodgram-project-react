@@ -7,14 +7,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 load_dotenv(os.path.join(BASE_DIR.parent.parent, 'infra/.env'), verbose=True)
 
-SECRET_KEY = os.getenv(
-    'SECRET_KEY',
-    default='ye$rkl91a4^2cl6a=un2ldd26t-n)eh%g)(vot6p2yg0&r=&tg'
-    )
+SECRET_KEY = os.getenv('SECRET_KEY',
+                       default='ye$rkl91a4^2cl6a=un2ldd26t-n)eh%g)\
+                        (vot6p2yg0&r=&tg')
 
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
+
 
 # Application definition
 
@@ -83,20 +83,16 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': ('django.contrib.auth.password_validation.',
-                 'UserAttributeSimilarityValidator'),
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
-        'NAME': ('django.contrib.auth.password_validation.'
-                 'MinimumLengthValidator'),
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
     {
-        'NAME': ('django.contrib.auth.password_validation.'
-                 'CommonPasswordValidator'),
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
     {
-        'NAME': ('django.contrib.auth.password_validation.'
-                 'NumericPasswordValidator'),
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
 
@@ -111,7 +107,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)

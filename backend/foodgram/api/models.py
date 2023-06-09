@@ -23,11 +23,8 @@ class Tag(models.Model):
         'Цвет в HEX',
         max_length=7,
         unique=True,
-        validators=[RegexValidator(
-            regex='^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$',
-            message='Введите значение цвета в формате HEX')
-        ]
-    )
+        validators=[RegexValidator(regex='^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$',
+                    message='Введите значение цвета в формате HEX')])
     slug = models.CharField('Уникальный слаг',
                             max_length=200,
                             unique=True,
@@ -51,8 +48,7 @@ class Recipe(models.Model):
                               upload_to='images/')
     text = models.TextField('Описание')
     cooking_time = models.PositiveSmallIntegerField(
-        'Время приготовления в минутах'
-    )
+        'Время приготовления в минутах')
 
     def __str__(self) -> str:
         return self.name
@@ -91,12 +87,11 @@ class Favorite(models.Model):
     '''Избранные рецепты.'''
     user = models.ForeignKey(
         User,
-        related_name='favorite_recipe',
         on_delete=models.CASCADE
     )
     recipe = models.ForeignKey(
         Recipe,
-        related_name='favorite_recipe',
+        related_name='favorites',
         on_delete=models.CASCADE
     )
 
