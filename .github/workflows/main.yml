@@ -1,58 +1,70 @@
-name: Django-app workflow
+name: Foodgram-app workflow
 
 on: [push]
 
 jobs:
   tests:
-    # «Раннер» — создание изолированного окружения с последней версией Ubuntu 
     runs-on: ubuntu-latest
-
     steps:
-    # Запуск actions checkout — готового скрипта 
-    # для клонирования репозитория
-    - uses: actions/checkout@v2
-    - name: Set up Python
-      # Запуск actions setup-python — готового скрипта 
-      # для развёртывания окружения Python
-      uses: actions/setup-python@v2
-      with:
-        # Выбор версии Python
-        python-version: 3.7
+      - uses: actions/checkout@v2
 
-    - name: Install dependencies
-      run: | 
-        # обновление pip
-        python -m pip install --upgrade pip 
-        # установка flake8 и его плагинов
-        pip install flake8 pep8-naming flake8-broken-line flake8-return flake8-isort
-        # установка зависимостей
-        pip install -r requirements.txt 
+      - name: Set Up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
 
-    - name: Test with flake8 and django tests
-      run: |
-        # запуск проверки проекта по flake8
-        python -m flake8
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 pep8-naming flake8-broken-line flake8-return flake8-isort
+          pip install -r backend/requirements.txt
+      - name: Test with flake8
+        run: |
+          cd backend/
+          python -m flake8
 
   build_and_push_to_docker_hub:
-    name: Push Docker image to Docker Hub
+    name: Push Docker image to DockerHub
     runs-on: ubuntu-latest
     needs: tests
     steps:
       - name: Check out the repo
-        # Проверка доступности репозитория Docker Hub для workflow
-        uses: actions/checkout@v2 
+        uses: actions/checkout@v2
       - name: Set up Docker Buildx
-        # Вызов сборщика контейнеров docker
-        uses: docker/setup-buildx-action@v1 
-      - name: Login to Docker 
-        # Запуск скрипта авторизации на Docker Hub
-        uses: docker/login-action@v1 
+        uses: docker/setup-buildx-action@v1
+      - name: Login to Docker
+        uses: docker/login-action@v1
         with:
-          username: '<ваш_username_dockerhub>' 
-          password: <ваш_пароль_dockerhub>
-      - name: Push to Docker Hub
-        # Пуш образа в Docker Hub 
-        uses: docker/build-push-action@v2 
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+      - name: Push to DockerHub
+        uses: docker/build-push-action@v2
         with:
+          context: ./backend/
           push: true
-          tags: ваш-логин-на-docker-hub/ваш-репозиторий-на-docker-hub:latest
+          tags: gelyadoma/foodgram:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build_and_push_to_docker_hub
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - name: executing remote ssh commands to deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          script: |
+            sudo docker-compose stop
+            sudo docker-compose rm backend
+            touch .env
+            echo SECRET_KEY=${{ secrets.SECRET_KEY }} 
+            echo DB_ENGINE=${{ secrets.DB_ENGINE }}
+            echo DB_NAME=${{ secrets.DB_NAME }}
+            echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} 
+            echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+            echo DB_HOST=${{ secrets.DB_HOST }}
+            echo DB_PORT=${{ secrets.DB_PORT }}
+            sudo docker-compose up -d
