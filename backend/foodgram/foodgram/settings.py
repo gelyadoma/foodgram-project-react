@@ -7,9 +7,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 load_dotenv(os.path.join(BASE_DIR.parent.parent, 'infra/.env'), verbose=True)
 
-SECRET_KEY = os.getenv('SECRET_KEY',
-                       default='ye$rkl91a4^2cl6a=un2ldd26t-n)eh%g)\
-                        (vot6p2yg0&r=&tg')
+SECRET_KEY = os.getenv(
+    'SECRET_KEY',
+    default='ye$rkl91a4^2cl6a=un2ldd26t-n)eh%g)(vot6p2yg0&r=&tg')
 
 DEBUG = True
 
