@@ -12,9 +12,10 @@
 - Python
 - Django
 - Docker
-- Dockercompose
+- Docker-compose
 - Nginx
 - Gunicorn
+
 Более подробно см. 'foodgram\requirements.txt'
 
 ## Функционал
