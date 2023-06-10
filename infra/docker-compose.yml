@@ -7,8 +7,11 @@ services:
     env_file:
       - ./.env
   
-  backend: 
-    image: gelyadoma/foodgram:v1
+  backend:
+    build:
+      context: ../backend/foodgram
+      dockerfile: Dockerfile 
+    # image: gelyadoma/foodgram:v2
     restart: always    
     volumes:      
       - static_value:/app/static/      
@@ -21,7 +24,10 @@ services:
       - ./.env 
   
   frontend:
-    image: gelyadoma/frontend:v1
+    build: 
+      context: ../frontend/
+      dockerfile: Dockerfile
+    # image: gelyadoma/frontend:v1
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
