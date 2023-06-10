@@ -1,5 +1,5 @@
 # API Foodgram 
-![example workflow](https://github.com/gelyadoma/foodgram-project-react/.github/workflows/main.yml/badge.svg)
+![example workflow](https://github.com/gelyadoma/foodgram-project-react/actions/workflows/main.yml/badge.svg)
 
 Этот проект позволяет взаимодействовать с сервисом Foodgram через API. Сервис предоставляет возможность публиковать свои рецепты, добавлять в избранные рецепты других авторов и составлять список покупок.
 В проекте собранны файлы для развертывания приложения локально и на удаленном сервере в Docker.
