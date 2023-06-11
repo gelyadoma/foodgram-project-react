@@ -11,7 +11,7 @@ services:
     build:
       context: ../backend/foodgram
       dockerfile: Dockerfile 
-    # image: gelyadoma/foodgram:v2
+    # image: gelyadoma/foodgram:latest
     restart: always    
     volumes:      
       - static_value:/app/static/      
@@ -27,7 +27,7 @@ services:
     build: 
       context: ../frontend/
       dockerfile: Dockerfile
-    # image: gelyadoma/frontend:v1
+    # image: gelyadoma/frontend:latest
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
